@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>739</width>
+    <height>679</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+    background-color: #2b2b2b;
+    color: #b0b0b0;
+    font-family: Arial;
+    font-size: 13px;
+}
+
+QLabel#lbl_tieu_de { 
+    color: #00bcd4;
+    font-size: 16px;
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+QLineEdit, QComboBox, QListWidget {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 6px;
+    color: #e0e0e0;
+}
+QPushButton#btn_tim_kiem {
+    background-color: #00bcd4;
+    color: black;
+    border-radius: 5px;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: bold;
+}
+QPushButton#btn_tim_kiem:hover {
+    background-color: #0097a7;
+}
+
+QListWidget::item {
+    padding: 4px 6px;
+}
+QListWidget::item:selected {
+    background-color: #00bcd4;
+    color: black;
+}
+
+QPushButton#btn_bo_chon_quan {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 4px 10px;
+}
+QPushButton#btn_bo_chon_quan:hover {
+    background-color: #4a4a4a;
+}
+
+QLabel#lbl_chat_tieu_de {
+    color: #00bcd4;
+    font-size: 14px;
+    font-weight: bold;
+}
+QLabel#lbl_chat_phan_hoi {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 8px;
+    color: #cfcfcf;
+}
+QPushButton#btn_chat_gui {
+    background-color: #00bcd4;
+    color: black;
+    border-radius: 5px;
+    padding: 6px 18px;
+    font-weight: bold;
+}
+QPushButton#btn_chat_gui:hover {
+    background-color: #0097a7;
+}
+QPushButton#btn_chat_gui:disabled {
+    background-color: #555;
+    color: #999;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="lbl_tieu_de">
+     <property name="text">
+      <string>TÌM KIẾM VÀ LỌC PHÒNG TRỌ</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Giá tối đa (VNĐ):</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEdit_4">
+       <property name="text">
+        <string>VD: 4.000.000</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Quận / Huyện (Hà Nội):</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <layout class="QVBoxLayout" name="layoutQuanHuyen">
+       <item>
+        <widget class="QLabel" name="lbl_goi_y_quan">
+         <property name="text">
+          <string>Bấm để chọn / bỏ chọn nhiều quận, huyện (không chọn = tất cả)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="listQuanHuyen">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>150</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>170</height>
+          </size>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::MultiSelection</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>Ba Đình</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Bắc Từ Liêm</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Cầu Giấy</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hà Đông</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hai Bà Trưng</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hoàn Kiếm</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hoàng Mai</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Long Biên</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Nam Từ Liêm</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Tây Hồ</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Thanh Xuân</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Đống Đa</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Chương Mỹ</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Gia Lâm</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hoài Đức</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Mê Linh</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Phú Xuyên</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Quốc Oai</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sóc Sơn</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Thạch Thất</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Thanh Trì</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Thường Tín</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Đan Phượng</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Đông Anh</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_bo_chon_quan">
+         <property name="text">
+          <string>Bỏ chọn tất cả</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Diện tích (m2):</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="text">
+          <string>Từ: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_3">
+         <property name="text">
+          <string>Đến: </string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Đồ dùng có sẵn:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="3">
+        <widget class="QCheckBox" name="checkBox_8">
+         <property name="text">
+          <string>Bình chữa cháy</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="checkBox_4">
+         <property name="text">
+          <string>Quạt</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="checkBox_6">
+         <property name="text">
+          <string>Nóng lạnh</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="checkBox_9">
+         <property name="text">
+          <string>Điều hòa</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="checkBox_7">
+         <property name="text">
+          <string>Giường</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QCheckBox" name="checkBox_5">
+         <property name="text">
+          <string>Bếp</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QCheckBox" name="checkBox_3">
+         <property name="text">
+          <string>Tủ lạnh</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="3">
+        <widget class="QPushButton" name="btn_tim_kiem">
+         <property name="text">
+          <string>TÌM KIẾM</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="layoutChat">
+     <item>
+      <widget class="QLabel" name="lbl_chat_tieu_de">
+       <property name="text">
+        <string>CHATBOT GỢI Ý BỘ LỌC</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbl_chat_phan_hoi">
+       <property name="text">
+        <string>Mô tả nhu cầu của bạn, ví dụ: "trọ gần Học viện Bưu chính Viễn thông, dưới 3 triệu, có điều hòa". Chatbot sẽ tự điền bộ lọc phía trên.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="layoutChatInput">
+       <item>
+        <widget class="QLineEdit" name="lineEdit_chat">
+         <property name="placeholderText">
+          <string>Nhập yêu cầu, ví dụ: trọ gần Bưu chính viễn thông</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_chat_gui">
+         <property name="text">
+          <string>Gửi</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>28</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

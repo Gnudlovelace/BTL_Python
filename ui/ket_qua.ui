@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>650</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Kết quả tìm kiếm</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+    font-family: Arial;
+    font-size: 13px;
+}
+
+QLabel#lbl_ket_qua {
+    color: #00bcd4;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+QPushButton#btn_quay_lai {
+    background-color: #00bcd4;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 7px 18px;
+    font-weight: bold;
+}
+
+QPushButton#btn_quay_lai:hover {
+    background-color: #0097a7;
+}
+
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QWidget#scrollAreaWidgetContents {
+    background-color: transparent;
+}</string>
+  </property>
+
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="lbl_ket_qua">
+       <property name="text">
+        <string>KẾT QUẢ PHÒNG TRỌ TÌM ĐƯỢC</string>
+       </property>
+      </widget>
+     </item>
+
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+
+     <item>
+      <widget class="QPushButton" name="btn_quay_lai">
+       <property name="text">
+        <string>Quay lại</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>650</width>
+        <height>500</height>
+       </rect>
+      </property>
+
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>12</number>
+       </property>
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

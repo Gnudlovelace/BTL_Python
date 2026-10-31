@@ -1,0 +1,14 @@
+# Bí mật (API key)
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Môi trường ảo
+.venv/
+venv/
+
+# Cấu hình editor
+.vscode/
+.idea/
