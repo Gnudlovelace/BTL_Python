@@ -86,5 +86,5 @@ DB cũ thiếu cột nào thì `setup_database()` tự thêm vào khi chạy `da
 ## luồng hoạt động
 
 <p align="center">
-  <img src="image/flowchart.png" alt="Flowchart hệ thống" width="600">
+  <img src="image/flowchart.png" alt="Flowchart hệ thống" width="300">
 </p>
