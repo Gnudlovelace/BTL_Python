@@ -4,80 +4,85 @@ from urllib.parse import urlsplit
 
 from PyQt5.QtCore import Qt, QObject, QRunnable, QThreadPool, QUrl, pyqtSignal
 from PyQt5.QtGui import QDesktopServices, QPainter, QPixmap
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QVBoxLayout
+from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QLabel, QPushButton,
+                             QSizePolicy, QVBoxLayout)
 
-from config import ANH_TOI_DA_BYTE, ANH_THOI_GIAN_CHO
+from config import ANH_TOI_DA_BYTE, ANH_CHO
+
+QSS_NUT = """
+QPushButton { background-color: rgba(60, 60, 60, 230); color: #fff; font-size: 22px;
+              font-weight: bold; border: 1px solid #666; border-radius: 6px; }
+QPushButton:hover { background-color: #00bcd4; color: black; }
+QPushButton:disabled { color: #555; border-color: #333; }
+"""
 
 
-class _TinHieu(QObject):
-    xong = pyqtSignal(str, bytes)   
+class TinHieu(QObject):
+    xong = pyqtSignal(str, bytes)
 
 
-class _TacVuTai(QRunnable):
-    def __init__(self, url, referer, tin_hieu):
+class TacVuTai(QRunnable):
+    def __init__(self, url, ref, tin_hieu):
         super().__init__()
-        self.url, self.referer, self.tin_hieu = url, referer, tin_hieu
+        self.url, self.ref, self.tin_hieu = url, ref, tin_hieu
 
     def run(self):
-        du_lieu = b""
+        data = b""
         try:
-            goc = urlsplit(self.referer or self.url)
+            goc = urlsplit(self.ref or self.url)
             req = urllib.request.Request(self.url, headers={
                 "User-Agent": "Mozilla/5.0",
                 "Referer": f"{goc.scheme}://{goc.netloc}/",
             })
-            with urllib.request.urlopen(req, timeout=ANH_THOI_GIAN_CHO) as r:
-                du_lieu = r.read(ANH_TOI_DA_BYTE + 1)
-            if len(du_lieu) > ANH_TOI_DA_BYTE:
-                du_lieu = b""
+            with urllib.request.urlopen(req, timeout=ANH_CHO) as r:
+                data = r.read(ANH_TOI_DA_BYTE + 1)
+            if len(data) > ANH_TOI_DA_BYTE:
+                data = b""
         except Exception:
-            du_lieu = b""
-        self.tin_hieu.xong.emit(self.url, du_lieu)
+            data = b""
+        self.tin_hieu.xong.emit(self.url, data)
 
 
 class KhoAnh(QObject):
-    """Tải ảnh nền + cache trong bộ nhớ."""
-    san_sang = pyqtSignal(str)       # url vừa tải xong 
+    san_sang = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
-        self._cache = {}             # url 
-        self._dang_tai = set()
-        self._pool = QThreadPool(self)
-        self._pool.setMaxThreadCount(3)
-        self._tin_hieu = _TinHieu()
-        self._tin_hieu.xong.connect(self._nhan)
+        self.cache = {}
+        self.dang_tai = set()
+        self.pool = QThreadPool(self)
+        self.pool.setMaxThreadCount(3)
+        self.tin_hieu = TinHieu()
+        self.tin_hieu.xong.connect(self.nhan_anh)
 
-    def lay(self, url):
-        """bytes nếu đã có, b"" nếu tải lỗi, None nếu chưa tải."""
-        return self._cache.get(url)
+    def lay_anh(self, url):
+        return self.cache.get(url)
 
-    def tai(self, url, referer=None):
-        if not url or url in self._cache or url in self._dang_tai:
+    def tai_anh(self, url, ref=None):
+        if not url or url in self.cache or url in self.dang_tai:
             return
-        self._dang_tai.add(url)
-        self._pool.start(_TacVuTai(url, referer, self._tin_hieu))
+        self.dang_tai.add(url)
+        self.pool.start(TacVuTai(url, ref, self.tin_hieu))
 
-    def _nhan(self, url, du_lieu):
-        self._cache[url] = du_lieu
-        self._dang_tai.discard(url)
+    def nhan_anh(self, url, data):
+        self.cache[url] = data
+        self.dang_tai.discard(url)
         self.san_sang.emit(url)
 
 
 _kho = None
 
 
-def kho_anh():
+def lay_kho():
     global _kho
     if _kho is None:
         _kho = KhoAnh()
     return _kho
 
 
-def doc_danh_sach_anh(p):
-    """Danh sách link ảnh của một phòng (dict lấy từ DB). Trả về [] nếu chưa có."""
+def doc_ds_anh(phong):
     try:
-        ds = json.loads(p.get("anh_urls") or "[]")
+        ds = json.loads(phong.get("anh_urls") or "[]")
     except (json.JSONDecodeError, TypeError):
         return []
     if not isinstance(ds, list):
@@ -86,48 +91,41 @@ def doc_danh_sach_anh(p):
 
 
 class LabelAnh(QLabel):
-    """Nhãn tự vẽ ảnh vừa khít kích thước hiện tại (giữ tỉ lệ), vẽ lại mỗi khi đổi cỡ.
-    Vẽ trong paintEvent nên luôn đúng cỡ thật, kể cả khi ảnh có sẵn trước lúc cửa sổ hiện ra."""
-
     def __init__(self, *args):
         super().__init__(*args)
-        self._pm = None
-        self._cache = (None, None)       # (kích thước, ảnh đã co giãn)
+        self.pm = None
+        self.cache = (None, None)
 
     def dat_anh(self, pm):
-        self._pm = pm
-        self._cache = (None, None)
+        self.pm = pm
+        self.cache = (None, None)
         self.update()
 
     def paintEvent(self, event):
-        if self._pm is None:
-            super().paintEvent(event)    # không có ảnh 
+        if self.pm is None:
+            super().paintEvent(event)
             return
-        if self._cache[0] != self.size():
-            self._cache = (self.size(), self._pm.scaled(
+
+        if self.cache[0] != self.size():
+            self.cache = (self.size(), self.pm.scaled(
                 self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        anh = self._cache[1]
+
+        anh = self.cache[1]
         painter = QPainter(self)
-        painter.drawPixmap((self.width() - anh.width()) // 2,
-                           (self.height() - anh.height()) // 2, anh)
-
-
-QSS_MUI_TEN = """
-QPushButton { background-color: rgba(60, 60, 60, 230); color: #fff; font-size: 22px;
-              font-weight: bold; border: 1px solid #666; border-radius: 6px; }
-QPushButton:hover { background-color: #00bcd4; color: black; }
-QPushButton:disabled { color: #555; border-color: #333; }
-"""
+        painter.drawPixmap(
+            (self.width() - anh.width()) // 2,
+            (self.height() - anh.height()) // 2,
+            anh,
+        )
 
 
 class DialogXemAnh(QDialog):
-    """Xem toàn bộ ảnh của một phòng, chuyển ảnh bằng nút < > hoặc phím mũi tên."""
-
-    def __init__(self, danh_sach_url, referer=None, parent=None):
+    def __init__(self, ds_url, ref=None, parent=None):
         super().__init__(parent)
-        self.ds = list(danh_sach_url)
+        self.ds = list(ds_url)
         self.vi_tri = 0
-        self.referer = referer
+        self.ref = ref
+
         self.setWindowTitle("Ảnh phòng")
         self.resize(820, 580)
         self.setStyleSheet("QDialog { background-color: #1e1e1e; }"
@@ -136,20 +134,19 @@ class DialogXemAnh(QDialog):
         self.lbl = LabelAnh("Đang tải ảnh...")
         self.lbl.setAlignment(Qt.AlignCenter)
         self.lbl.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        self.lbl.setMinimumSize(640, 400)   # khung ảnh 
+        self.lbl.setMinimumSize(640, 400)
 
         self.nut_trai = QPushButton("<")
         self.nut_phai = QPushButton(">")
+        co_nhieu = len(self.ds) > 1
         for nut in (self.nut_trai, self.nut_phai):
             nut.setFixedSize(44, 80)
             nut.setCursor(Qt.PointingHandCursor)
             nut.setFocusPolicy(Qt.NoFocus)
-            nut.setStyleSheet(QSS_MUI_TEN)
-        self.nut_trai.clicked.connect(lambda: self._chuyen(-1))
-        self.nut_phai.clicked.connect(lambda: self._chuyen(+1))
-        co_nhieu = len(self.ds) > 1
-        self.nut_trai.setVisible(co_nhieu)
-        self.nut_phai.setVisible(co_nhieu)
+            nut.setStyleSheet(QSS_NUT)
+            nut.setVisible(co_nhieu)
+        self.nut_trai.clicked.connect(lambda: self.chuyen_anh(-1))
+        self.nut_phai.clicked.connect(lambda: self.chuyen_anh(+1))
 
         hang_anh = QHBoxLayout()
         hang_anh.addWidget(self.nut_trai)
@@ -159,9 +156,10 @@ class DialogXemAnh(QDialog):
         self.lbl_dem = QLabel("")
         self.lbl_dem.setAlignment(Qt.AlignCenter)
         nut_mo = QPushButton("Mở bằng trình duyệt")
-        nut_mo.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(self.ds[self.vi_tri])))
+        nut_mo.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(self.url_hien)))
         nut_dong = QPushButton("Đóng")
         nut_dong.clicked.connect(self.accept)
+
         hang_duoi = QHBoxLayout()
         hang_duoi.addWidget(self.lbl_dem, 1)
         hang_duoi.addWidget(nut_mo)
@@ -171,54 +169,55 @@ class DialogXemAnh(QDialog):
         bo_cuc.addLayout(hang_anh, 1)
         bo_cuc.addLayout(hang_duoi)
 
-        kho = kho_anh()
-        kho.san_sang.connect(self._khi_tai_xong)
-        self.finished.connect(lambda *_: kho.san_sang.disconnect(self._khi_tai_xong))
-        self._hien_thi()
+        kho = lay_kho()
+        kho.san_sang.connect(self.khi_xong)
+        self.finished.connect(lambda *_: kho.san_sang.disconnect(self.khi_xong))
+        self.hien_anh()
 
     @property
-    def url_hien_tai(self):
+    def url_hien(self):
         return self.ds[self.vi_tri]
 
-    def _chuyen(self, buoc):
+    def chuyen_anh(self, buoc):
         if len(self.ds) > 1:
-            self.vi_tri = (self.vi_tri + buoc) % len(self.ds)   # hết ảnh thì vòng lại
-            self._hien_thi()
+            self.vi_tri = (self.vi_tri + buoc) % len(self.ds)
+            self.hien_anh()
 
-    def _hien_thi(self):
-        kho = kho_anh()
+    def hien_anh(self):
+        kho = lay_kho()
         self.lbl_dem.setText(f"{self.vi_tri + 1} / {len(self.ds)}")
-        url = self.url_hien_tai
-        du_lieu = kho.lay(url)
-        if du_lieu is None:                  # chưa tải 
+
+        url = self.url_hien
+        data = kho.lay_anh(url)
+
+        if data is None:
             self.lbl.dat_anh(None)
             self.lbl.setText("Đang tải ảnh...")
-            kho.tai(url, self.referer)
+            kho.tai_anh(url, self.ref)
         else:
             pm = QPixmap()
-            if du_lieu and pm.loadFromData(du_lieu):
+            if data and pm.loadFromData(data):
                 self.lbl.setText("")
                 self.lbl.dat_anh(pm)
-                # In kích thước để dễ kiểm tra 
                 print(f"[anh_phong] ảnh gốc {pm.width()}x{pm.height()} px, "
                       f"khung hiển thị {self.lbl.width()}x{self.lbl.height()} px")
             else:
                 self.lbl.dat_anh(None)
                 self.lbl.setText("Không tải được ảnh này.\n"
                                  "Bạn có thể bấm \"Mở bằng trình duyệt\".")
-        # tải sẵn ảnh 
-        if len(self.ds) > 1:
-            kho.tai(self.ds[(self.vi_tri + 1) % len(self.ds)], self.referer)
-            kho.tai(self.ds[(self.vi_tri - 1) % len(self.ds)], self.referer)
 
-    def _khi_tai_xong(self, url):
-        if url == self.url_hien_tai:
-            self._hien_thi()
+        if len(self.ds) > 1:
+            kho.tai_anh(self.ds[(self.vi_tri + 1) % len(self.ds)], self.ref)
+            kho.tai_anh(self.ds[(self.vi_tri - 1) % len(self.ds)], self.ref)
+
+    def khi_xong(self, url):
+        if url == self.url_hien:
+            self.hien_anh()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Left:
-            self._chuyen(-1)
+            self.chuyen_anh(-1)
         elif event.key() == Qt.Key_Right:
-            self._chuyen(+1)
+            self.chuyen_anh(+1)
         else:
             super().keyPressEvent(event)

@@ -10,8 +10,12 @@ class ChatWorker(QThread):
 
     def run(self):
         try:
-            ket_qua = self.chatbot.xu_ly_cau_hoi(self.cau_hoi)
+            kq = self.chatbot.xu_ly(self.cau_hoi)
         except Exception as e:
-            ket_qua = {"status": False, "message": f"Chatbot gặp lỗi: {e}",
-                       "criteria": None, "nguon": None}
-        self.xong.emit(ket_qua)
+            kq = {
+                "status": False,
+                "message": f"Chatbot gặp lỗi: {e}",
+                "criteria": None,
+                "nguon": None,
+            }
+        self.xong.emit(kq)

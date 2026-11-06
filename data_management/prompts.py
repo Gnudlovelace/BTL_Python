@@ -1,4 +1,4 @@
-def tao_prompt(mo_dau, vi_du_do_dung, quy_tac_them=""):
+def tao_prompt(mo_dau, vi_du, quy_tac_them=""):
     return mo_dau + """
 
 {du_lieu}
@@ -10,7 +10,7 @@ Hãy trả về MỘT JSON ARRAY hợp lệ, mỗi bài đúng một object vớ
     "gia_dien": 4000,
     "gia_nuoc": 100000,
     "gia_dich_vu": null,
-    "do_dung_hien_co": """ + vi_du_do_dung + """
+    "do_dung_hien_co": """ + vi_du + """
 }
 
 Quy tắc:
@@ -23,8 +23,10 @@ Quy tắc:
 
 
 PROMPT_GULAND = tao_prompt(
-    "Bạn đang xử lý dữ liệu của nhiều bài đăng thuê phòng trọ.\n\nDưới đây là danh sách các bài đăng:",
-    '["điều hòa", "nóng lạnh", "giường"]')
+    "Bạn đang xử lý dữ liệu của nhiều bài đăng thuê phòng trọ.\n\n"
+    "Dưới đây là danh sách các bài đăng:",
+    '["điều hòa", "nóng lạnh", "giường"]',
+)
 
 PROMPT_PHONGTRO123 = tao_prompt(
     "Bạn đang xử lý mô tả của nhiều bài đăng cho thuê phòng trọ. Mô tả rất lộn xộn:\n"
@@ -39,4 +41,5 @@ PROMPT_PHONGTRO123 = tao_prompt(
    Mỗi món là một phần tử ngắn gọn, viết thường, không trùng lặp.
 8. KHÔNG đưa vào danh sách: số điện thoại, địa chỉ, tên trường, giờ giấc, camera/an ninh,
    giá, câu quảng cáo hay bất kỳ thông tin nào không phải đồ dùng.
-""")
+""",
+)
